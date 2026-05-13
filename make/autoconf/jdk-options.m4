@@ -48,7 +48,6 @@ AC_DEFUN_ONCE([JDKOPT_SETUP_ENABLE_OHOS],
       ]], [[]])],
       [ENABLE_OHOS="yes"],
       [ENABLE_OHOS="no"])
-  AC_SUBST(ENABLE_OHOS)
   AC_MSG_RESULT([$ENABLE_OHOS])
 ])
 
