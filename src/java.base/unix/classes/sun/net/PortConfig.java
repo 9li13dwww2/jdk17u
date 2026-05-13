@@ -43,7 +43,7 @@ public final class PortConfig {
     static {
         jdk.internal.loader.BootLoader.loadLibrary("net");
         String os = GetPropertyAction.privilegedGetProperty("os.name");
-        if (os.startsWith("Linux")) {
+        if (os.startsWith("Linux") || os.startsWith("HarmonyOS")) {
             defaultLower = 32768;
             defaultUpper = 61000;
         } else if (os.contains("OS X")) {

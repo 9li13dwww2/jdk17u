@@ -370,6 +370,22 @@ GetJavaProperties(JNIEnv *env)
     }
 #endif /* MACOSX */
 
+#ifdef __OHOS__
+    static char* tmp_path;
+    tmp_path = getenv("TMPDIR");
+
+    if (tmp_path == NULL) {
+        if (access("/tmp", F_OK) == 0) {
+            tmp_path = "/tmp";
+        }
+        else {
+            tmp_path = "/data/storage/el2/base/cache";
+        }
+    }
+
+    sprops.tmp_dir = tmp_path;
+#endif
+
     /* patches/service packs installed */
     sprops.patch_level = NULL;      // leave it undefined
 

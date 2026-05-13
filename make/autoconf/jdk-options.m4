@@ -37,6 +37,22 @@ AC_DEFUN_ONCE([JDKOPT_SETUP_JDK_VARIANT],
   UTIL_DEPRECATED_ARG_WITH([jdk-variant])
 ])
 
+AC_DEFUN_ONCE([JDKOPT_SETUP_ENABLE_OHOS],
+[
+AC_MSG_CHECKING([enable compile ohos])
+AC_ARG_ENABLE([ohos], [AS_HELP_STRING([--enable-ohos],
+	[Enable compile ohos @<:@disabled@:>@])],
+  [enable_ohos=yes])
+if test "x$enable_ohos" != "xyes"; then
+  ENABLE_OHOS="no"
+else
+  ENABLE_OHOS="$enable_ohos"
+fi
+
+AC_SUBST(ENABLE_OHOS)
+AC_MSG_RESULT([enable-ohos=$ENABLE_OHOS])
+])
+
 ###############################################################################
 # Set the debug level
 #    release: no debug information, all optimizations, no asserts.

@@ -65,9 +65,11 @@ void ShenandoahArguments::initialize() {
 
   // Enable NUMA by default. While Shenandoah is not NUMA-aware, enabling NUMA makes
   // storage allocation code NUMA-aware.
+#ifndef __OHOS__
   if (FLAG_IS_DEFAULT(UseNUMA)) {
     FLAG_SET_DEFAULT(UseNUMA, true);
   }
+#endif
 
   // Set up default number of concurrent threads. We want to have cycles complete fast
   // enough, but we also do not want to steal too much CPU from the concurrently running

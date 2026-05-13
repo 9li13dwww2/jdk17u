@@ -60,7 +60,7 @@ enum Platform {UNKNOWN, WINDOWS, LINUX, MAC;
         if (os.indexOf("win") >= 0) {
             platform = Platform.WINDOWS;
         }
-        else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+        else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.equals("harmonyos")) {
             platform = Platform.LINUX;
         }
         else if (os.indexOf("mac") >= 0) {
@@ -70,7 +70,8 @@ enum Platform {UNKNOWN, WINDOWS, LINUX, MAC;
             platform = Platform.UNKNOWN;
         }
 
-        String version = System.getProperty("os.version").toString();
+        String[] tmp = System.getProperty("os.version").toString().split("\\s+");
+        String version = tmp[tmp.length - 1];
         String[] parts = version.split(Pattern.quote("."));
 
         if (parts.length > 0) {

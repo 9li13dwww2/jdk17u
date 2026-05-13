@@ -85,7 +85,7 @@ final class ProcessImpl extends Process {
 
     private static enum Platform {
 
-        LINUX(LaunchMechanism.POSIX_SPAWN, LaunchMechanism.VFORK, LaunchMechanism.FORK),
+        LINUX(LaunchMechanism.VFORK, LaunchMechanism.FORK, LaunchMechanism.POSIX_SPAWN),
 
         BSD(LaunchMechanism.POSIX_SPAWN, LaunchMechanism.FORK),
 
@@ -132,6 +132,7 @@ final class ProcessImpl extends Process {
         static Platform get() {
             String osName = GetPropertyAction.privilegedGetProperty("os.name");
 
+            if (osName.equals("HarmonyOS")) { return LINUX; }
             if (osName.equals("Linux")) { return LINUX; }
             if (osName.contains("OS X")) { return BSD; }
             if (osName.equals("AIX")) { return AIX; }

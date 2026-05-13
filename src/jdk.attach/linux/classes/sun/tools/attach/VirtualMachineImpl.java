@@ -46,7 +46,6 @@ public class VirtualMachineImpl extends HotSpotVirtualMachine {
     // location is the same for all processes, otherwise the tools
     // will not be able to find all Hotspot processes.
     // Any changes to this needs to be synchronized with HotSpot.
-    private static final String tmpdir = "/tmp";
     String socket_path;
     /**
      * Attaches to the target VM
@@ -313,9 +312,9 @@ public class VirtualMachineImpl extends HotSpotVirtualMachine {
                           "of target process %d", procRootDirectory, pid));
             }
 
-            root = procRootDirectory + "/" + tmpdir;
+            root = procRootDirectory + "/" + VirtualMachineImpl.getTemporaryDirectory();;
         } else {
-            root = tmpdir;
+            root = VirtualMachineImpl.getTemporaryDirectory();
         }
         return root;
     }
@@ -389,6 +388,8 @@ public class VirtualMachineImpl extends HotSpotVirtualMachine {
     static native int read(int fd, byte buf[], int off, int bufLen) throws IOException;
 
     static native void write(int fd, byte buf[], int off, int bufLen) throws IOException;
+
+    private static native String getTemporaryDirectory();
 
     static {
         System.loadLibrary("attach");
