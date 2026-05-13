@@ -31,7 +31,7 @@ public class PlatformInfo {
   /* Returns "win32" if Windows; "linux" if Linux. */
   public static String getOS() throws UnsupportedPlatformException {
     String os = System.getProperty("os.name");
-    if (os.equals("Linux")) {
+    if (os.equals("Linux") || os.equals("HarmonyOS")) {
       return "linux";
     } else if (os.equals("FreeBSD")) {
       return "bsd";

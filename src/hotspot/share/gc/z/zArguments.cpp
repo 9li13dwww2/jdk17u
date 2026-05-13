@@ -50,9 +50,11 @@ void ZArguments::initialize() {
   }
 
   // Enable NUMA by default
+#ifndef __OHOS__
   if (FLAG_IS_DEFAULT(UseNUMA)) {
     FLAG_SET_DEFAULT(UseNUMA, true);
   }
+#endif
 
   // Select number of parallel threads
   if (FLAG_IS_DEFAULT(ParallelGCThreads)) {

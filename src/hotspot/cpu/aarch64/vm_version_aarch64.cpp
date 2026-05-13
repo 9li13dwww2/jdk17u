@@ -402,7 +402,9 @@ void VM_Version::initialize() {
 
   if (_features & CPU_SVE) {
     if (FLAG_IS_DEFAULT(UseSVE)) {
+#ifndef __OHOS__
       FLAG_SET_DEFAULT(UseSVE, (_features & CPU_SVE2) ? 2 : 1);
+#endif
     }
   } else if (UseSVE > 0) {
     warning("UseSVE specified, but not supported on current CPU. Disabling SVE.");

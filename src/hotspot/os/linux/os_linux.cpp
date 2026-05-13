@@ -135,7 +135,7 @@
 // for timer info max values which include all bits
 #define ALL_64_BITS CONST64(0xFFFFFFFFFFFFFFFF)
 
-#ifdef MUSL_LIBC
+#if defined(MUSL_LIBC) && !defined(__OHOS__)
 // dlvsym is not a part of POSIX
 // and musl libc doesn't implement it.
 static void *dlvsym(void *handle,
@@ -1437,7 +1437,25 @@ const char* os::dll_file_extension() { return ".so"; }
 
 // This must be hard coded because it's the system's temporary
 // directory not the java application's temp directory, ala java.io.tmpdir.
-const char* os::get_temp_directory() { return "/tmp"; }
+const char* os::get_temp_directory() {
+#ifdef __OHOS__
+  char* temp_dir = ::getenv("TMPDIR");
+  if (temp_dir != NULL) {
+    log_info(os)("OS TMPDIR from env: %s", temp_dir);
+    return temp_dir;
+  }
+
+  if (::access("/tmp", F_OK) == 0) {
+    log_info(os)("OS TMPDIR fallback to /tmp");
+    return "/tmp";
+  }
+
+  log_info(os)("OS TMPDIR fallback to /data/storage/el2/base/cache");
+  return "/data/storage/el2/base/cache";
+#else
+  return "/tmp";
+#endif
+}
 
 // check if addr is inside libjvm.so
 bool os::address_is_in_vm(address addr) {
@@ -1910,7 +1928,11 @@ const char* os::Linux::dll_path(void* lib) {
   const char* l_path = NULL;
   assert(lib != NULL, "dll_path parameter must not be NULL");
 
+#ifdef __OHOS__
+  int res_dli = -1; // ::dlinfo(lib, RTLD_DI_LINKMAP, &lmap);
+#else
   int res_dli = ::dlinfo(lib, RTLD_DI_LINKMAP, &lmap);
+#endif
   if (res_dli == 0) {
     l_path = lmap->l_name;
   }
@@ -3055,17 +3077,25 @@ extern "C" JNIEXPORT void numa_error(char *where) { }
 // Handle request to load libnuma symbol version 1.1 (API v1). If it fails
 // load symbol from base version instead.
 void* os::Linux::libnuma_dlsym(void* handle, const char *name) {
+#ifdef __OHOS__
+  return dlsym(handle, name);
+#else
   void *f = dlvsym(handle, name, "libnuma_1.1");
   if (f == NULL) {
     f = dlsym(handle, name);
   }
   return f;
+#endif
 }
 
 // Handle request to load libnuma symbol version 1.2 (API v2) only.
 // Return NULL if the symbol is not defined in this particular version.
 void* os::Linux::libnuma_v2_dlsym(void* handle, const char* name) {
+#ifdef __OHOS__
+  return dlsym(handle, name);
+#else
   return dlvsym(handle, name, "libnuma_1.2");
+#endif
 }
 
 // Check numa dependent syscalls
@@ -4674,6 +4704,12 @@ jint os::init_2(void) {
 
   // initialize thread priority policy
   prio_init();
+
+#ifdef __OHOS__
+  if (FLAG_IS_DEFAULT(StartAttachListener)) {
+    FLAG_SET_DEFAULT(StartAttachListener, true);
+  }
+#endif
 
   if (!FLAG_IS_DEFAULT(AllocateHeapAt)) {
     set_coredump_filter(DAX_SHARED_BIT);

@@ -139,7 +139,9 @@ static char* get_user_tmp_dir(const char* user, int vmid, int nspid) {
   // /proc/{vmid}/root/tmp/{PERFDATA_NAME_user}
   // otherwise /tmp/{PERFDATA_NAME_user}
   char buffer[TMP_BUFFER_LEN];
+#ifndef __OHOS__
   assert(strlen(tmpdir) == 4, "No longer using /tmp - update buffer size");
+#endif
 
   if (nspid != -1) {
     jio_snprintf(buffer, TMP_BUFFER_LEN, "/proc/%d/root%s", vmid, tmpdir);
@@ -435,6 +437,15 @@ static bool is_file_secure(int fd, const char *filename) {
 //
 static char* get_user_name(uid_t uid) {
 
+#ifdef __OHOS__
+  const char* user = getenv("USER");
+  if(user == NULL) {
+    user = "100";
+  }
+  char buf[1024];
+  char* user_name = NEW_C_HEAP_ARRAY(char, strlen(user)+1, mtInternal);
+  strcpy(user_name, user);
+#else
   struct passwd pwent;
 
   // Determine the max pwbuf size from sysconf, and hardcode
@@ -482,6 +493,7 @@ static char* get_user_name(uid_t uid) {
   strcpy(user_name, p->pw_name);
 
   FREE_C_HEAP_ARRAY(char, pwbuf);
+#endif
   return user_name;
 }
 
@@ -514,7 +526,9 @@ static char* get_user_name_slow(int vmid, int nspid, TRAPS) {
   char* tmpdirname = (char *)os::get_temp_directory();
 #if defined(LINUX)
   char buffer[MAXPATHLEN + 1];
+#ifndef __OHOS__
   assert(strlen(tmpdirname) == 4, "No longer using /tmp - update buffer size");
+#endif
 
   // On Linux, if nspid != -1, look in /proc/{vmid}/root/tmp for directories
   // containing nspid, otherwise just look for vmid in /tmp.
@@ -635,6 +649,13 @@ static char* get_user_name_slow(int vmid, int nspid, TRAPS) {
 // return the name of the user that owns the JVM indicated by the given vmid.
 //
 static char* get_user_name(int vmid, int *nspid, TRAPS) {
+#ifdef __OHOS__
+  char* user = get_user_name(vmid);
+  if(user == NULL) {
+    user = get_user_name_slow(vmid, *nspid, THREAD);
+  }
+  return user;
+#else
   char *result = get_user_name_slow(vmid, *nspid, THREAD);
 
 #if defined(LINUX)
@@ -647,6 +668,7 @@ static char* get_user_name(int vmid, int *nspid, TRAPS) {
   }
 #endif
   return result;
+#endif
 }
 
 // return the file name of the backing store file for the named

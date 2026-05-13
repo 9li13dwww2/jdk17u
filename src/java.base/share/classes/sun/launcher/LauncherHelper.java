@@ -175,7 +175,7 @@ public final class LauncherHelper {
                 SecuritySettings.printSecuritySettings(opt, ostream);
                 break;
             case "system":
-                if (System.getProperty("os.name").contains("Linux")) {
+                if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("HarmonyOS")) {
                     printSystemMetrics();
                     break;
                 }
@@ -184,7 +184,7 @@ public final class LauncherHelper {
                 printProperties();
                 printLocale(true);
                 SecuritySettings.printSecuritySummarySettings(ostream);
-                if (System.getProperty("os.name").contains("Linux")) {
+                if (System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("HarmonyOS")) {
                     printSystemMetrics();
                 }
                 break;

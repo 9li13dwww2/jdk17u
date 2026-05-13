@@ -25,6 +25,8 @@
 
 #include "jni_util.h"
 
+#include "jvm.h"
+
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -262,4 +264,10 @@ JNIEXPORT void JNICALL Java_sun_tools_attach_VirtualMachineImpl_write
         }
 
     } while (remaining > 0);
+}
+
+JNIEXPORT jstring JNICALL
+Java_sun_tools_attach_VirtualMachineImpl_getTemporaryDirectory(JNIEnv *env, jclass cls)
+{
+    return JVM_GetTemporaryDirectory(env);
 }
