@@ -39,18 +39,17 @@ AC_DEFUN_ONCE([JDKOPT_SETUP_JDK_VARIANT],
 
 AC_DEFUN_ONCE([JDKOPT_SETUP_ENABLE_OHOS],
 [
-AC_MSG_CHECKING([enable compile ohos])
-AC_ARG_ENABLE([ohos], [AS_HELP_STRING([--enable-ohos],
-	[Enable compile ohos @<:@disabled@:>@])],
-  [enable_ohos=yes])
-if test "x$enable_ohos" != "xyes"; then
-  ENABLE_OHOS="no"
-else
-  ENABLE_OHOS="$enable_ohos"
-fi
-
-AC_SUBST(ENABLE_OHOS)
-AC_MSG_RESULT([enable-ohos=$ENABLE_OHOS])
+  AC_MSG_CHECKING([if toolchain defines __OHOS__])
+  AC_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM([[
+#ifndef __OHOS__
+#error "__OHOS__ is not defined"
+#endif
+      ]], [[]])],
+      [ENABLE_OHOS="yes"],
+      [ENABLE_OHOS="no"])
+  AC_SUBST(ENABLE_OHOS)
+  AC_MSG_RESULT([$ENABLE_OHOS])
 ])
 
 ###############################################################################
